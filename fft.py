@@ -2,6 +2,7 @@ import numpy as np
 import math
 import sys
 import matplotlib.pyplot as plt
+import scipy.fftpack as sf
 
 def dft(x):
     x = np.asarray(x, dtype=float)
@@ -33,14 +34,15 @@ def fft(x_raw):
         x_append = np.zeros(N_ceil-N)
         x= np.append(x_raw,x_append)
     N = N_ceil
+
     if N <= 2:
         return dft(x)
     else:
         X_even = fft(x[::2])
         X_odd = fft(x[1::2])
         coe = np.exp(-2j * np.pi * np.arange(N) / N)
-        return np.concatenate([X_even + coe[:int(N / 2)] * X_odd,
-                               X_even + coe[int(N / 2):] * X_odd])
+        return np.concatenate((X_even + coe[:int(N / 2)] * X_odd,
+                               X_even + coe[int(N / 2):] * X_odd))
 
 
 
@@ -67,18 +69,26 @@ def fft_inv(x_raw):
 
 def twodfft(signal: np.array):
     row, column = signal.shape
-    columns_transformation = []
+    columns_transformation = np.zeros((row, column), dtype=np.complex_)
     for c in range(column):
-        columns_transformation.append(fft(signal[:, c]))
-    return fft(columns_transformation)
+        columns_transformation[:, c] = fft(signal[:, c]).T
+
+    final_result = np.zeros((row, column), dtype=np.complex_)
+    for r in range(row):
+        final_result[r, :] = fft(columns_transformation[r, :])
+    return final_result
 
 
 def twodfft_inverse(signal: np.array):
     row, column = signal.shape
-    columns_inverse = []
+    columns_inverse = np.zeros((row, column), dtype=np.complex_)
     for c in range(column):
-        columns_inverse.append(fft_inv(signal[:, c]))
-    return 1/(row * column) * fft_inv(columns_inverse)
+        columns_inverse[:, c] = fft_inv(signal[:, c]).T
+
+    final_result = np.zeros((row, column), dtype=np.complex_)
+    for r in range(row):
+        final_result[r, :] = fft_inv(columns_inverse[r, :])
+    return 1 / (row * column) * final_result
 
 
 if __name__ == '__main__':
@@ -99,7 +109,14 @@ if __name__ == '__main__':
         index += 1
 
     img_data = plt.imread(img).astype(float)
-    
+
+    # sfft = sf.fft2(img_data)
+    # sifft = sf.ifft2(sfft)
+    # d = twodfft(img_data)
+    # id = twodfft_inverse(sifft)
+    #
+    # print("1")
+
     if mode == 1:
         # call mode 1 function
         exit()
