@@ -24,9 +24,15 @@ def dft_inv(X):
 
 def fft(x_raw):
     x_raw = np.asarray(x_raw, dtype=float)
-    N_raw = x_raw.shape[0]
-    N = pow(2, math.floor(math.log(N_raw, 2)))
-    x = x_raw[:,:N]
+    N = x_raw.shape[0]
+    N_ceil = pow(2, math.ceil(math.log(N, 2)))
+    if(N-N_ceil == 0):
+        x = x_raw
+    else:
+        x_append = np.zeros(N_ceil-N)
+        np.append(x_raw,x_append)
+
+    x=x_raw
     if N <= 2:
         return dft(x)
     else:
@@ -40,9 +46,15 @@ def fft(x_raw):
 
 def fft_inv(x_raw):
     x_raw = np.asarray(x_raw, dtype=float)
-    N_raw = x_raw.shape[0]
-    N = pow(2, math.floor(math.log(N_raw, 2)))
-    x = x_raw[:, :N]
+    N = x_raw.shape[0]
+    N_ceil = pow(2, math.ceil(math.log(N, 2)))
+    if (N - N_ceil == 0):
+        x = x_raw
+    else:
+        x_append = np.zeros(N_ceil - N)
+        np.append(x_raw, x_append)
+
+    x = x_raw
     if N <= 2:
         return dft_inv(x)
     else:
