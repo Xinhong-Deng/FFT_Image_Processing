@@ -56,12 +56,11 @@ def fft_inv(x_raw):
 
 def twodfft(signal: np.array):
     row, column = signal.shape
-    columns_transformation = np.zeros((row, column))
+    columns_transformation = np.zeros((row, column), dtype=np.complex_)
     for c in range(column):
-        print(signal[:, c].shape)
         columns_transformation[:, c] = fft(signal[:, c]).T
 
-    final_result = np.zeros((row, column))
+    final_result = np.zeros((row, column), dtype=np.complex_)
     for r in range(row):
         final_result[r, :] = fft(columns_transformation[r, :])
     return final_result
@@ -69,14 +68,14 @@ def twodfft(signal: np.array):
 
 def twodfft_inverse(signal: np.array):
     row, column = signal.shape
-    columns_inverse = np.zeros(row, column)
+    columns_inverse = np.zeros((row, column), dtype=np.complex_)
     for c in range(column):
         columns_inverse[:, c] = fft_inv(signal[:, c]).T
 
-    final_result = np.zeros(row, column)
+    final_result = np.zeros((row, column), dtype=np.complex_)
     for r in range(row):
         final_result[r, :] = fft_inv(columns_inverse[r, :])
-    return 1/(row * column) * final_result
+    return 1 / (row * column) * final_result
 
 
 if __name__ == '__main__':
@@ -98,24 +97,25 @@ if __name__ == '__main__':
 
     img_data = plt.imread(img).astype(float)
 
-    sfft = sf.fft(img_data)
-    d = twodfft(img_data)
+    # sfft = sf.fft2(img_data)
+    # sifft = sf.ifft2(sfft)
+    # d = twodfft(img_data)
+    # id = twodfft_inverse(sifft)
+    #
+    # print("1")
 
-    if all(sfft == d):
-        print("tick!")
-    
-    # if mode == 1:
-    #     # call mode 1 function
-    #     exit()
-    #
-    # if mode == 2:
-    #     # call mode 2 function
-    #     exit()
-    #
-    # if mode == 3:
-    #     # call mode 3 function
-    #     exit()
-    #
-    # if mode == 4:
-    #     # call mode 4 function
-    #     exit()
+    if mode == 1:
+        # call mode 1 function
+        exit()
+
+    if mode == 2:
+        # call mode 2 function
+        exit()
+
+    if mode == 3:
+        # call mode 3 function
+        exit()
+
+    if mode == 4:
+        # call mode 4 function
+        exit()
