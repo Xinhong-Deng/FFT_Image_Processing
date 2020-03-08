@@ -7,18 +7,18 @@ def dft(x):
     x = np.asarray(x, dtype=float)
     N = x.shape[0]
     n_small = np.asarray(range(0,N))
-    k = np.transpose(n_small)
-    power = np.exp(-2j * np.pi * k * n_small / N)
-    return np.dot(power, x)
+    k = n_small.reshape((N, 1))
+    coe = np.exp(-2j * np.pi * k * n_small / N)
+    return np.dot(coe, x)
 
 
 def dft_inv(X):
     X = np.asarray(X, dtype=float)
     N = X.shape[0]
     n_small = np.asarray(range(0, N))
-    k = np.transpose(n_small)
-    power = np.exp(2j * np.pi * k * n_small / N)
-    return (1/N) * np.dot(power, X)
+    k = n_small.reshape((N, 1))
+    coe = np.exp(2j * np.pi * k * n_small / N)
+    return (1/N) * np.dot(coe, X)
 
 
 
@@ -48,9 +48,9 @@ def fft_inv(x_raw):
     else:
         X_even = fft_inv(x[::2])
         X_odd = fft_inv(x[1::2])
-        terms = np.exp(2j * np.pi * np.arange(N) / N)
-        return np.concatenate([X_even + terms[:int(N / 2)] * X_odd,
-                               X_even + terms[int(N / 2):] * X_odd])
+        coe = np.exp(2j * np.pi * np.arange(N) / N)
+        return np.concatenate([X_even + coe[:int(N / 2)] * X_odd,
+                               X_even + coe[int(N / 2):] * X_odd])
 
 
 def twodfft(signal: np.array):
