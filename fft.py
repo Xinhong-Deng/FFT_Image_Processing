@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import sys
+import matplotlib.pyplot as plt
 
 def dft(x):
     x = np.asarray(x, dtype=float)
@@ -71,7 +72,6 @@ def twodfft_inverse(signal: np.array):
 if __name__ == '__main__':
     mode = 1
     img = "moonlanding.png"
-    print(sys.argv)
     index = 1
     while index < len(sys.argv):
         if sys.argv[index] == "-m":
@@ -86,6 +86,8 @@ if __name__ == '__main__':
 
         index += 1
 
+    img_data = plt.imread(img).astype(float)
+    
     if mode == 1:
         # call mode 1 function
         exit()
