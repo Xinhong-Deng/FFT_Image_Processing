@@ -64,8 +64,8 @@ def twodfft_inverse(signal: np.array):
     row, column = signal.shape
     columns_inverse = []
     for c in range(column):
-        columns_inverse.append(fft_inverse(signal[:, c]))
-    return 1/(row * column) * fft_inverse(columns_inverse)
+        columns_inverse.append(fft_inv(signal[:, c]))
+    return 1/(row * column) * fft_inv(columns_inverse)
 
 
 if __name__ == '__main__':
