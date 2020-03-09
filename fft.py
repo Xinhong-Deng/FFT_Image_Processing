@@ -2,38 +2,39 @@ import numpy as np
 import math
 import sys
 import matplotlib.pyplot as plt
-import scipy.fftpack as sf
+
+
+def pad_to_power_2(x_raw):
+    N = x_raw.shape[0]
+    N_ceil = pow(2, math.ceil(math.log(N, 2)))
+    if N - N_ceil == 0:
+        return x_raw, N
+    else:
+        x_append = np.zeros(N_ceil - N)
+        return np.append(x_raw, x_append), N_ceil
+
 
 def dft(x):
-    x = np.asarray(x, dtype=float)
+    x = np.asarray(x, dtype=np.complex_)
     N = x.shape[0]
-    n_small = np.asarray(range(0,N))
+    n_small = np.asarray(range(0, N), dtype=np.complex_)
     k = n_small.reshape((N, 1))
     coe = np.exp(-2j * np.pi * k * n_small / N)
     return np.dot(coe, x)
 
 
 def dft_inv(X):
-    X = np.asarray(X, dtype=float)
+    X = np.asarray(X, dtype=np.complex_)
     N = X.shape[0]
-    n_small = np.asarray(range(0, N))
+    n_small = np.asarray(range(0, N), dtype=np.complex_)
     k = n_small.reshape((N, 1))
     coe = np.exp(2j * np.pi * k * n_small / N)
-    return (1/N) * np.dot(coe, X)
-
+    return np.dot(coe, X)
 
 
 def fft(x_raw):
-    x_raw = np.asarray(x_raw, dtype=float)
-    N = x_raw.shape[0]
-    N_ceil = pow(2, math.ceil(math.log(N, 2)))
-    x= x_raw
-    if(N-N_ceil == 0):
-        x = x_raw
-    else:
-        x_append = np.zeros(N_ceil-N)
-        x= np.append(x_raw,x_append)
-    N = N_ceil
+    x_raw = np.asarray(x_raw)
+    x, N = pad_to_power_2(x_raw)
 
     if N <= 2:
         return dft(x)
@@ -45,50 +46,57 @@ def fft(x_raw):
                                X_even + coe[int(N / 2):] * X_odd))
 
 
+def fft_inv_helper(x_raw):
+    x_raw = np.asarray(x_raw)
+    x, N = pad_to_power_2(x_raw)
 
-def fft_inv(x_raw):
-    x_raw = np.asarray(x_raw, dtype=float)
-    N = x_raw.shape[0]
-    N_ceil = pow(2, math.ceil(math.log(N, 2)))
-    x= x_raw
-    if(N-N_ceil == 0):
-        x = x_raw
-    else:
-        x_append = np.zeros(N_ceil-N)
-        x= np.append(x_raw,x_append)
-    N = N_ceil
     if N <= 2:
         return dft_inv(x)
     else:
-        X_even = fft_inv(x[::2])
-        X_odd = fft_inv(x[1::2])
+        X_even = fft_inv_helper(x[::2])
+        X_odd = fft_inv_helper(x[1::2])
         coe = np.exp(2j * np.pi * np.arange(N) / N)
         return np.concatenate([X_even + coe[:int(N / 2)] * X_odd,
                                X_even + coe[int(N / 2):] * X_odd])
 
 
+def fft_inv(x_raw):
+    x, N = pad_to_power_2(x_raw)
+    coe = 1 / N
+    result = coe * np.array(fft_inv_helper(x_raw))
+    return result
+
+
 def twodfft(signal: np.array):
     row, column = signal.shape
-    columns_transformation = np.zeros((row, column), dtype=np.complex_)
+    columns_transformation = []
     for c in range(column):
-        columns_transformation[:, c] = fft(signal[:, c]).T
+        columns_transformation.append(fft(signal[:, c]))
 
-    final_result = np.zeros((row, column), dtype=np.complex_)
+    final_result = []
+    columns_transformation = np.asarray(columns_transformation, dtype=np.complex_).T
     for r in range(row):
-        final_result[r, :] = fft(columns_transformation[r, :])
-    return final_result
+        final_result.append(fft(columns_transformation[r, :]))
+
+    final_result = np.asarray(final_result, dtype=np.complex_)
+    zero_padding = np.zeros((columns_transformation.shape[0] - row, final_result.shape[1]), dtype=np.complex_)
+    return np.append(final_result, zero_padding, 0)
 
 
 def twodfft_inverse(signal: np.array):
     row, column = signal.shape
-    columns_inverse = np.zeros((row, column), dtype=np.complex_)
+    columns_inverse = []
     for c in range(column):
-        columns_inverse[:, c] = fft_inv(signal[:, c]).T
+        columns_inverse.append(fft_inv(signal[:, c]))
 
-    final_result = np.zeros((row, column), dtype=np.complex_)
+    final_result = []
+    columns_inverse = np.asarray(columns_inverse, dtype=np.complex_).T
     for r in range(row):
-        final_result[r, :] = fft_inv(columns_inverse[r, :])
-    return 1 / (row * column) * final_result
+        final_result.append(fft_inv(columns_inverse[r, :]))
+
+    final_result = np.asarray(final_result, dtype=np.complex_)
+    zero_padding = np.zeros((columns_inverse.shape[0] - row, final_result.shape[1]), dtype=np.complex_)
+    return np.append(final_result, zero_padding, 0)
 
 
 if __name__ == '__main__':
@@ -109,13 +117,6 @@ if __name__ == '__main__':
         index += 1
 
     img_data = plt.imread(img).astype(float)
-
-    # sfft = sf.fft2(img_data)
-    # sifft = sf.ifft2(sfft)
-    # d = twodfft(img_data)
-    # id = twodfft_inverse(sifft)
-    #
-    # print("1")
 
     if mode == 1:
         # call mode 1 function
