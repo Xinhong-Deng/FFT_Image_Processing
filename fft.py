@@ -3,6 +3,7 @@ import math
 import sys
 import matplotlib.pyplot as plt
 import scipy.fftpack as sf
+from matplotlib.colors import LogNorm
 
 
 def pad_to_power_2(x_raw):
@@ -116,12 +117,29 @@ if __name__ == '__main__':
             exit()
 
         index += 1
-
+    img_data_raw = plt.imread(img).astype(float)
     img_data = plt.imread(img).astype(float)
+    # plt.figure()
+    # plt.imshow(plt.imread(img),plt.cm.gray)
+    # plt.show()
     img_data = np.append(img_data, np.zeros((512 - 474, 630), dtype=np.complex_), axis=0)
     img_data = np.append(img_data, np.zeros((512, 1024 - 630), dtype=np.complex_), axis=1)
 
     sfft = twodfft(img_data)
+    # plt.figure()
+    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # # plt.figure()
+    # ax1 = plt.imshow(img_data_raw,plt.cm.gray)
+    # ax2 = plt.imshow(np.abs(sfft),norm=LogNorm(vmin=5))
+    # plt.show()
+    plt.figure(1)
+    plt.subplot(121)
+    plt.imshow(img_data_raw,plt.cm.gray)
+
+    plt.subplot(122)
+    plt.imshow(np.abs(sfft),norm=LogNorm(vmin=5))
+    plt.show()
+
     w,h = sfft.shape
     r = 0.1
     # sfft[0:int(w * 0.1), 0:int(h * 0.1)] = 0
@@ -132,9 +150,16 @@ if __name__ == '__main__':
     sfft[:, int(h * r):int(h * (1 - r))] = 0
     new = twodfft_inverse(sfft)
     new_im = new[0:474, 0:630]
-    plt.figure()
+    # plt.figure()
+    # plt.imshow(new_im.real, plt.cm.gray)
+    # plt.title('Reconstructed Image')
+    # plt.show()
+    plt.figure(1)
+    plt.subplot(121)
+    plt.imshow(img_data_raw, plt.cm.gray)
+
+    plt.subplot(122)
     plt.imshow(new_im.real, plt.cm.gray)
-    plt.title('Reconstructed Image')
     plt.show()
 
     # sifft = sf.ifft2(sfft)
