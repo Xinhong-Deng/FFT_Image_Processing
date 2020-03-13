@@ -121,13 +121,29 @@ if __name__ == '__main__':
     img_data = np.append(img_data, np.zeros((512 - 474, 630), dtype=np.complex_), axis=0)
     img_data = np.append(img_data, np.zeros((512, 1024 - 630), dtype=np.complex_), axis=1)
 
-    sfft = sf.fft2(img_data)
+    sfft = twodfft(img_data)
+    w,h = sfft.shape
+    r = 0.1
+    # sfft[0:int(w * 0.1), 0:int(h * 0.1)] = 0
+    # sfft[0:int(w * 0.1), int(h * 0.9):h] = 0
+    # sfft[int(w * 0.9):w, int(h * 0.9):h] = 0
+    # sfft[int(w * 0.9):w, 0:int(h * 0.1)] = 0
+    sfft[int(r * w):int( w * (1 - r))] = 0
+    sfft[:, int(h * r):int(h * (1 - r))] = 0
+    new = twodfft_inverse(sfft)
+    new_im = new[0:474, 0:630]
+    plt.figure()
+    plt.imshow(new_im.real, plt.cm.gray)
+    plt.title('Reconstructed Image')
+    plt.show()
+
     # sifft = sf.ifft2(sfft)
     # d = twodfft(img_data)
     # id = twodfft_inverse(d)
 
     c0 = fft_inv(sfft[:, 0])
     sifft = sf.ifft(sfft[:, 0])
+
 
     # data = [-1.99765739e+04-6.09136962e+04j , 5.62322155e+03+1.29968394e+04j, 1.42919663e+03+2.40975589e+03j, -2.49200697e+03+2.08932389e+03j]
     data = [1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8,1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8,1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8,1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8]
