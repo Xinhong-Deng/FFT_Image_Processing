@@ -6,10 +6,11 @@ import scipy.fftpack as sf
 from matplotlib.colors import LogNorm
 
 
+
 def pad_to_power_2(x_raw):
     N = x_raw.shape[0]
     N_ceil = pow(2, math.ceil(math.log(N, 2)))
-    if (N - N_ceil == 0):
+    if N - N_ceil == 0:
         return x_raw, N
     else:
         x_append = np.zeros(N_ceil - N)
@@ -94,7 +95,7 @@ def twodfft_inverse(signal: np.array):
     final_result = []
     columns_inverse = np.asarray(columns_inverse, dtype=np.complex_).T
     for r in range(row):
-        final_result.append(sf.ifft(columns_inverse[r, :]))
+        final_result.append(fft_inv(columns_inverse[r, :]))
 
     final_result = np.asarray(final_result, dtype=np.complex_)
     zero_padding = np.zeros((columns_inverse.shape[0] - row, final_result.shape[1]), dtype=np.complex_)
