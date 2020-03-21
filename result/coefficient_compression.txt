@@ -1,0 +1,18 @@
+----- compression percentage:  0.0  -----
+number of zeros:  485376
+zero percentage:  0.07421875
+----- compression percentage:  0.19  -----
+number of zeros:  424674
+zero percentage:  0.18999862670898438
+----- compression percentage:  0.38  -----
+number of zeros:  325059
+zero percentage:  0.37999916076660156
+----- compression percentage:  0.5700000000000001  -----
+number of zeros:  225444
+zero percentage:  0.5699996948242188
+----- compression percentage:  0.76  -----
+number of zeros:  125830
+zero percentage:  0.7599983215332031
+----- compression percentage:  0.95  -----
+number of zeros:  26215
+zero percentage:  0.9499988555908203
