@@ -179,7 +179,7 @@ def compress(img_data_raw):
     compression_percentage = np.linspace(0, 0.95, 6)
     fig, axis = plt.subplots(2, 3)
     for i in range(0, 6):
-        compressed_fft = smallest_coefficient_compression(img_fft, compression_percentage[i])
+        compressed_fft = high_frequency_compression(img_fft, compression_percentage[i])
         img = two_d_fft_inverse(compressed_fft).real[:w, :h]
         axis[int(i / 3)][int(i % 3)].imshow(abs(img), cmap='gray')
         axis[int(i / 3)][int(i % 3)].set_title(str(int(compression_percentage[i] * 100)) + "% compression")
@@ -188,9 +188,6 @@ def compress(img_data_raw):
 
 
 def high_frequency_compression(img_fft, removal_percentage):
-    if removal_percentage == 0:
-        return img_fft
-
     w, h = img_fft.shape
     p = math.sqrt((1 - removal_percentage) / 4)
 
@@ -202,7 +199,7 @@ def high_frequency_compression(img_fft, removal_percentage):
     print("zero percentage: ", 1 - (np.count_nonzero(img_fft) / (w * h)))
 
     csr = scipy.sparse.csr_matrix(img_fft)
-    scipy.sparse.save_npz("frequency_compression_" + str(round(removal_percentage, 2)), csr, compressed=False)
+    scipy.sparse.save_npz("frequency_compression_compressed_" + str(round(removal_percentage, 2)), csr, compressed=False)
 
     return img_fft
 
