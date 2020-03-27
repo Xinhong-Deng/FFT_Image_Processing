@@ -247,6 +247,12 @@ def run_time_evaluation():
         dft_avg.append(np.mean(dft_time_result))
         dft_std.append(np.std(dft_time_result) * 2)
 
+    print("----- runtime result -----")
+    for i in range(6):
+        print("data size: ", size[i], "*", size[i])
+        print("fft mean time: ", fft_avg[i], "; fft std deviation: ", fft_std[i])
+        print("dft mean time: ", dft_avg[i], "; dft std deviation: ", dft_std[i])
+
     plt.clf()
     plt.errorbar(size, fft_avg, yerr=fft_std, fmt="b.", label="fft")
     plt.errorbar(size, dft_avg, yerr=dft_std, fmt="r.", label="dft")
